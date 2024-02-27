@@ -1,0 +1,17 @@
+.logoPath {
+    fill-opacity: 0;
+}
+
+.draw {
+    animation: revealPath 1s ease forwards;
+}
+
+@keyframes revealPath {
+    0% {
+        fill-opacity: 0;
+    }
+
+    100% {
+        fill-opacity: 1;
+    }
+}
