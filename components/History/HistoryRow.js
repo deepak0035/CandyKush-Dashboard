@@ -48,8 +48,11 @@ const HistoryRow = ({
     });
 
   return (
-    <tr key={orderId} className="bg-white">
-      <td className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap ">
+    <tr
+      key={orderId}
+      className="bg-white divide-x-2 divide-solid divide-gray-300"
+    >
+      <td className="px-4 py-4 text-lg font-medium text-gray-700 whitespace-nowrap ">
         <div className="flex justify-center items-center">
           <h1>{customerNumber}</h1>
         </div>
@@ -115,7 +118,7 @@ const HistoryRow = ({
             }
           )}
       </td>
-      <td className="px-4 py-4 text-center ">
+      <td className="px-4 py-4 text-center text-lg font-medium text-gray-700">
         <CurrencyFormat
           value={totalPrice}
           displayType={"text"}
@@ -124,7 +127,7 @@ const HistoryRow = ({
           className="text-pottBlack px-1"
         />
       </td>
-      <td className="px-4 py-4">
+      <td className="px-4 py-4 text-lg font-medium">
         <div className="flex justify-center items-center">
           <p className="text-gray-700">{formattedOrderTime}</p>
         </div>

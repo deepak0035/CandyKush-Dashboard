@@ -1,3 +1,4 @@
+
 import Layout from "@/components/Layout/Layout";
 
 import { Poppins } from "next/font/google";
@@ -5,6 +6,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ReactQuery from "@/components/Providers/ReactQuery";
 import Provider from "@/Redux/Provider/ReduxProvider";
+import { SessionProviders } from "@/components/Providers/SessionProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,7 +34,7 @@ export const metadata = {
   title: "Candy Kush - Admin Panel",
 };
 
-export default function RootLayout({ children, params }) {
+export default async function RootLayout({ children, params }) {
 
   return (
     <ReactQuery>
@@ -41,9 +43,11 @@ export default function RootLayout({ children, params }) {
           suppressHydrationWarning={true}
           className={`${poppins.className} ${westcoast.variable}  ${westcoastline.variable} bg-gray-100  ${krakens.variable} flex`}
         >
-          <Provider>
-            <Layout>{children}</Layout>
-          </Provider>
+          <SessionProviders>
+            <Provider>
+              <Layout>{children}</Layout>
+            </Provider>
+          </SessionProviders>
         </body>
       </html>
     </ReactQuery>

@@ -47,8 +47,11 @@ const OrdersRow = ({
   };
 
   return (
-    <tr key={orderId} className="bg-white">
-      <td className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap ">
+    <tr
+      key={orderId}
+      className="bg-white divide-x-2 divide-solid divide-gray-300"
+    >
+      <td className="px-4 py-4 text-lg font-medium text-gray-700 whitespace-nowrap ">
         <div className="flex justify-center items-center">
           <h1>{customerNumber}</h1>
         </div>
@@ -114,7 +117,7 @@ const OrdersRow = ({
             }
           )}
       </td>
-      <td className="px-4 py-4 text-center ">
+      <td className="px-4 py-4 text-center text-lg font-medium text-gray-700">
         <CurrencyFormat
           value={totalPrice}
           displayType={"text"}
@@ -145,34 +148,40 @@ const OrdersRow = ({
       {/* Popup for selecting payment option */}
       {showPopup && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-2">Select Payment Option</h2>
-            <div className="flex items-center mb-4">
-              <input
-                type="radio"
-                id="cash"
-                name="payment"
-                value="Cash"
-                checked={selectedPayment === "Cash"}
-                onChange={() => setSelectedPayment("Cash")}
-              />
-              <label htmlFor="cash" className="ml-2">
-                Cash
-              </label>
+          <div className="bg-white p-4 rounded-lg w-96 h-56 flex flex-col items-center justify-center">
+            <h2 className="text-2xl font-semibold mb-2">
+              Select Payment Option
+            </h2>
+            <div className="flex flex-col items-start px-10 text-lg py-2  w-full">
+              <div className="flex items-center mb-2">
+                <input
+                  type="radio"
+                  id="cash-payment"
+                  name="payment"
+                  value="Cash"
+                  checked={selectedPayment === "Cash"}
+                  onChange={() => setSelectedPayment("Cash")}
+                />
+                <label htmlFor="cash-payment" className="ml-2 cursor-pointer">
+                  Cash
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="card-payment"
+                  name="payment"
+                  value="Card"
+                  checked={selectedPayment === "Card"}
+                  onChange={() => setSelectedPayment("Card")}
+                />
+                <label htmlFor="card-payment" className="ml-2 cursor-pointer">
+                  Card
+                </label>
+              </div>
             </div>
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="card"
-                name="payment"
-                value="Card"
-                checked={selectedPayment === "Card"}
-                onChange={() => setSelectedPayment("Card")}
-              />
-              <label htmlFor="card" className="ml-2">
-                Card
-              </label>
-            </div>
+
             <div className="mt-4 flex justify-end">
               <button
                 onClick={handleClosePopup}

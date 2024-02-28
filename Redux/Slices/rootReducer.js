@@ -1,8 +1,8 @@
 // rootReducer.js
 import { combineReducers } from "redux";
-import cartSlice from "./cartSlice";
+import dashboardSlice from "./dashboardSlice";
 // Add other reducers as needed
 
 export default combineReducers({
-  cart: cartSlice,
+  dashboard: dashboardSlice,
 });

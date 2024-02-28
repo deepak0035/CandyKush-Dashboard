@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { isSidebarOpen } from "@/Redux/Slices/cartSlice";
+import { isSidebarOpen } from "@/Redux/Slices/dashboardSlice";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { getOrders, updateOrders } from "@/lib/helper";
 import CurrencyFormat from "react-currency-format";
@@ -20,7 +20,7 @@ const Page = () => {
           isSideBarOpen && "ml-64"
         }`}
       >
-        <div className="relative shadow-2xl sm:rounded-lg bg-white ">
+        <div className="relative shadow-2xl sm:rounded-lg  h-full">
           <HistoryTable />
         </div>
       </div>

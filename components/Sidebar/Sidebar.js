@@ -2,18 +2,26 @@ import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaHistory } from "react-icons/fa"; // Importing icons
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
-import { isSidebarOpen } from "@/Redux/Slices/cartSlice";
+import {
+  setPaymentFilter,
+  isSidebarOpen,
+  selectPaymentFilter,
+} from "@/Redux/Slices/dashboardSlice";
 import styles from "./LogoAnimation.module.css";
 import logo from "@/public/images/logoBg.png";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import { getOrders, updateOrders } from "@/lib/helper";
+import { useQuery } from "react-query";
+import { getOrders } from "@/lib/helper";
 import Link from "next/link"; // Import Link component from Next.js
+import { usePathname } from "next/navigation";
 
+const Sidebar = ({}) => {
+  const pathname = usePathname();
+  const dispatch = useDispatch();
+  const selectedPayment = useSelector(selectPaymentFilter); // Retrieve payment filter from Redux store
 
-const Sidebar = ({  }) => {
   const isSideBarOpen = useSelector(isSidebarOpen);
   const { isLoading, isError, data, error } = useQuery("orders", getOrders); // Use "orders" key here
-const totalOrders = data?.length 
+  const totalOrders = data?.length;
   const [animationIndex, setAnimationIndex] = useState(0);
 
   useEffect(() => {
@@ -37,6 +45,7 @@ const totalOrders = data?.length
         } bg-white border-r border-gray-200`}
         aria-label="Sidebar"
       >
+        {/* Sidebar content */}
         <div className="bg-white flex flex-col items-center py-8">
           <div className="col-span-1 flex items-center justify-center">
             <div className="relative">
@@ -65,6 +74,7 @@ const totalOrders = data?.length
                         c-0.01-0.01,2.57,0.18,2.84,0.25c0.84,0.23,1.67,0.57,2.46,0.93c1.67,0.76,3.21,1.79,4.59,2.99c2.84,2.49,5,5.75,6.29,9.29
                         c1.69,4.64,2.05,9.76,4.33,14.14C71.1,172.09,73.62,174.02,75.25,176.65z"
                       />
+
                       <path
                         className={`${styles.logoPath} ${
                           animationIndex >= 2 ? styles.draw : ""
@@ -106,27 +116,85 @@ const totalOrders = data?.length
           </h2>
         </div>
         <div className="h-full pb-4 overflow-y-auto bg-carpetMoss">
-     
           <ul className="">
             <li className="p-2 border-b border-gray-100/35">
               <Link href="/" passHref>
-                <button className="flex items-center p-2 text-white rounded-lg group">
-                  <FaShoppingCart className="w-6 h-6 text-white transition duration-75" />
+                <button
+                  className={`flex items-center p-2 text-white rounded-lg group ${
+                    pathname === "/" ? "text-white" : "text-white/50"
+                  }
+                  }`}
+                >
+                  <FaShoppingCart className="w-6 h-6  transition duration-75" />
                   <span className="ms-2">Orders</span>
-                  <span className="text-sm mx-2 h-5 w-5 text-carpetMoss flex justify-center items-center bg-white rounded-full">
+                 {pathname === '/' && <span className="text-sm mx-2 h-5 w-5 text-carpetMoss flex justify-center items-center bg-white rounded-full">
+                    {/* Display total pending orders count */}
                     {data &&
                       data.filter((order) => order.status === "Pending").length}
-                  </span>
+                  </span>}
                 </button>
               </Link>
             </li>
             <li className="p-2">
               <Link href="/history" passHref>
-                <button className="flex items-center p-2 text-white rounded-lg group">
-                  <FaHistory className="w-6 h-6 text-white transition duration-75" />
+                <button
+                  className={`flex items-center p-2 text-white rounded-lg group ${
+                    pathname === "/history" ? "text-white" : "text-white/50"
+                  }
+                  }`}
+                >
+                  <FaHistory className="w-6 h-6 transition duration-75" />
                   <span className="ms-2">History</span>
                 </button>
               </Link>
+        {     pathname === '/history' && <div className="mt-8 px-2">
+                {/* Professional filter section */}
+                <h3 className="text-white text-xl font-medium mb-2">
+                  Filter by :
+                </h3>
+                <div className="flex flex-col items-start mb-2">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="cash"
+                      name="payment"
+                      value="Cash"
+                      checked={selectedPayment === "Cash"}
+                      onChange={() => dispatch(setPaymentFilter("Cash"))}
+                      className="mr-2 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="cash"
+                      className="text-white mr-4 cursor-pointer"
+                    >
+                      Cash
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="card"
+                      name="payment"
+                      value="Card"
+                      checked={selectedPayment === "Card"}
+                      onChange={() => dispatch(setPaymentFilter("Card"))}
+                      className="mr-2 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="card"
+                      className="text-white mr-4 cursor-pointer"
+                    >
+                      Card
+                    </label>
+                  </div>
+                </div>
+                <button
+                  onClick={() => dispatch(setPaymentFilter(null))}
+                  className="py-2 px-4 bg-white text-carpetMoss rounded-md hover:bg-opacity-90 focus:outline-none"
+                >
+                  Clear Filter
+                </button>
+              </div>}
             </li>
           </ul>
         </div>

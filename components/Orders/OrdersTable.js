@@ -1,22 +1,33 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { isSidebarOpen } from "@/Redux/Slices/cartSlice";
+import { isSidebarOpen } from "@/Redux/Slices/dashboardSlice";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { getOrders, updateOrders } from "@/lib/helper";
 import CurrencyFormat from "react-currency-format";
 import OrdersRow from "./OrdersRow";
 
+
+
 const OrdersTable = () => {
   const { isLoading, isError, data, error, refetch } = useQuery(
     "orders",
-    getOrders
+    getOrders,
+    {
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: true,
+      refetchInterval: 3000, // Refetch data every 3000 milliseconds (3 seconds)
+    }
   );
+
   const queryClient = useQueryClient();
   const prevDataLengthRef = useRef(0); // Ref to keep track of previous data length
+  const [isFirstMount, setIsFirstMount] = useState(true); // State to track first mount
 
-
+  useEffect(() => {
+    setIsFirstMount(false); // Set isFirstMount to false after the first mount
+  }, []);
 
   // Update document title
   useEffect(() => {
@@ -30,75 +41,85 @@ const OrdersTable = () => {
         ? `(${pendingOrdersCount}) Pending Orders`
         : "Candy Kush - Admin Panel";
   }, [data]);
-    
-  // Watch for changes in data length
+
   useEffect(() => {
     if (!data) return;
 
     const newPendingOrders = data.filter((order) => order.status === "Pending");
 
-    if (newPendingOrders.length > prevDataLengthRef.current) {
-      try {
-        const notificationSound = new Audio("/ordersound.wav");
-        notificationSound.play();
-      } catch (error) {
-        console.error("Error playing notification sound:", error);
-      }
+    if (!isFirstMount && newPendingOrders.length > prevDataLengthRef.current) {
+      playNotificationSound();
     }
 
     prevDataLengthRef.current = newPendingOrders.length;
   }, [data]);
 
-  // Function to refetch orders
   const refetchOrders = async () => {
     await queryClient.invalidateQueries("orders");
   };
 
-  // Render loading and error states
+  const playNotificationSound = () => {
+    try {
+      const notificationSound = new Audio("/ordersound.wav");
+      notificationSound.play();
+    } catch (error) {
+      console.error("Error playing notification sound:", error);
+    }
+  };
+
   if (isLoading) return <div>Orders Data Loading...</div>;
   if (isError) return <div>Got Error {error?.message}</div>;
 
-  // Render orders table
   return (
-    <table className="w-full text-sm bg-white text-left rtl:text-right text-gray-500">
-      <caption className="text-3xl py-2 sticky top-0 bg-white">
-        Pending Orders
-      </caption>
-      <thead className="text-white bg-carpetMoss sticky top-[3.25rem]">
-        <tr>
-          <th scope="col" className="px-4 py-3 text-center">
-            Customer No
-          </th>
-          <th scope="col" className="px-8 py-3 text-center">
-            Product
-          </th>
-          <th scope="col" className="px-4 py-3 text-center">
-            Total Price
-          </th>
-          <th scope="col" className="px-4 py-3 text-center">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody
-        className="divide-y-4 divide-solid"
-        style={{ maxHeight: "400px", overflowY: "auto" }}
-      >
-        {data &&
-          data
-            .filter((order) => order.status === "Pending")
-            .map(({ customerNumber, orderItems, totalPrice, _id }) => (
-              <OrdersRow
-                key={_id}
-                customerNumber={customerNumber}
-                orderItems={orderItems}
-                totalPrice={totalPrice}
-                orderId={_id}
-                refetchOrders={refetchOrders} // Pass refetchOrders as prop to OrdersRow
-              />
-            ))}
-      </tbody>
-    </table>
+    <div className="h-full">
+  
+
+      {data.filter((order) => order.status === "Pending") < 1 ? (
+        <div className="w-full bg-white flex justify-center items-center h-full text-5xl text-carpetMoss font-semibold">
+          All clear on pending orders!
+        </div>
+      ) : (
+        <table className="w-full text-sm bg-white text-left rtl:text-right text-gray-500">
+          <caption className="text-3xl py-2 sticky top-0 bg-white">
+            Pending Orders
+          </caption>
+          <thead className="text-white bg-carpetMoss sticky top-[3.25rem]">
+            <tr>
+              <th scope="col" className="px-4 py-3 text-center">
+                Customer No
+              </th>
+              <th scope="col" className="px-8 py-3 text-center">
+                Product
+              </th>
+              <th scope="col" className="px-4 py-3 text-center">
+                Total Price
+              </th>
+              <th scope="col" className="px-4 py-3 text-center">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            className="divide-y-4 divide-solid"
+            style={{ maxHeight: "400px", overflowY: "auto" }}
+          >
+            {data &&
+              data
+                .filter((order) => order.status === "Pending")
+                .map(({ customerNumber, orderItems, totalPrice, _id }) => (
+                  <OrdersRow
+                    key={_id}
+                    customerNumber={customerNumber}
+                    orderItems={orderItems}
+                    totalPrice={totalPrice}
+                    orderId={_id}
+                    refetchOrders={refetchOrders} // Pass refetchOrders as prop to OrdersRow
+                  />
+                ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 };
 

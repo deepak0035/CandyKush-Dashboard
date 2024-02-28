@@ -1,24 +1,25 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
-import { isSidebarOpen, setToggleSidebar } from "@/Redux/Slices/cartSlice";
+import { isSidebarOpen, setToggleSidebar } from "@/Redux/Slices/dashboardSlice";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-const Topbar = () =>
-{
+const Topbar = () => {
   const dispatch = useDispatch();
-    const isSideBarOpen = useSelector(isSidebarOpen);
+  const isSideBarOpen = useSelector(isSidebarOpen);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleSidebar = () => {
-        dispatch(setToggleSidebar());
-
+    dispatch(setToggleSidebar());
   };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
+  const { data: session, status } = useSession();
 
   return (
     <header className="fixed z-40 top-0 left-0 w-screen">
@@ -55,7 +56,7 @@ const Topbar = () =>
               className="relative flex items-center justify-center space-x-2 mx-3 text-sm rounded-full md:mr-0 "
             >
               <span className="sr-only">Open user menu</span>
-              
+
               <Image
                 className=" bg-cover"
                 src="/images/logo.png"
@@ -63,7 +64,9 @@ const Topbar = () =>
                 width={35}
                 height={35}
               />
-              <h2 className="text-black/50 font-medium">Admin</h2>
+              <h2 className="text-black/50 font-medium">
+                {session?.user?.name}
+              </h2>
             </button>
             {/* Dropdown menu */}
             {dropdownOpen && (
@@ -83,6 +86,16 @@ const Topbar = () =>
                   <li>
                     <a
                       href="#"
+                      onClick={() => signIn()}
+                      className="block py-2 px-4 text-sm hover:bg-gray-100"
+                    >
+                      Sign In
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      onClick={() => signOut()}
                       className="block py-2 px-4 text-sm hover:bg-gray-100"
                     >
                       Sign out
