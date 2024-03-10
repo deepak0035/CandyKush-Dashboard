@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -7,8 +7,10 @@ import { isSidebarOpen } from "@/Redux/Slices/dashboardSlice";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { getOrders, updateOrders } from "@/lib/helper";
 import CurrencyFormat from "react-currency-format";
-import OrdersTable from "@/components/Orders/OrdersTable";
-import HistoryTable from "@/components/History/HistoryTable";
+import LoaderSpinner from "@/components/LoaderSpinner"; // Import your loader spinner component
+const HistoryTable = React.lazy(() =>
+  import("@/components/History/HistoryTable")
+); // Lazy load HistoryTable component
 
 const Page = () => {
   const isSideBarOpen = useSelector(isSidebarOpen);
@@ -21,7 +23,10 @@ const Page = () => {
         }`}
       >
         <div className="relative shadow-2xl sm:rounded-lg  h-full">
-          <HistoryTable />
+          <Suspense fallback={<LoaderSpinner />}>
+            {/* Wrap Suspense around component */}
+            <HistoryTable /> {/* Render HistoryTable component */}
+          </Suspense>
         </div>
       </div>
     </div>

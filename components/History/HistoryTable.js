@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { getOrders } from "@/lib/helper";
 import CurrencyFormat from "react-currency-format";
 import HistoryRow from "./HistoryRow";
+import LoaderSpinner from "../LoaderSpinner";
 
 const HistoryTable = () => {
   const paymentFilter = useSelector(selectPaymentFilter); // Retrieve payment filter from Redux store
@@ -16,7 +17,7 @@ const HistoryTable = () => {
     await queryClient.invalidateQueries("orders");
   };
 
-  if (isLoading) return <div>Orders Data Loading...</div>; // Updated loading message
+  if (isLoading) return <LoaderSpinner />; // Display loader spinner while loading
   if (isError) return <div>Got Error {error?.message}</div>;
 
   // Sort orders by date

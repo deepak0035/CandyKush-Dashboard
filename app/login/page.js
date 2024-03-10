@@ -1,20 +1,20 @@
-"use client";
 
+'use client';
 import React, { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 import Image from "next/image";
-import { MdOutlineEmail, MdLockOutline } from "react-icons/md";
+import LoaderSpinner from "@/components/LoaderSpinner"; // Import your loader spinner component
 
-const Login = () => {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const SuspenseWrapper = ({ children }) =>
+{
+  const router = useRouter()
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState(null);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-
+  const signInWithSuspense = async (email, password) => {
+    setIsSigningIn(true);
     try {
       const result = await signIn("credentials", {
         redirect: false,
@@ -26,12 +26,33 @@ const Login = () => {
         throw new Error(result.error);
       }
 
-      // Redirect to home page upon successful sign-in
-      await router.push("/");
+      toast.success("Login successful!");
+      console.log('login successful')
+      router.push("/");
     } catch (error) {
       console.error("Sign in failed:", error.message);
       setError("Invalid email or password. Please try again.");
+    } finally {
+      setIsSigningIn(false);
     }
+  };
+
+  return (
+    <React.Suspense fallback={<LoaderSpinner />}>
+      {children(signInWithSuspense, isSigningIn)}
+    </React.Suspense>
+  );
+};
+
+const Login = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const submitHandler = async (e, signInWithSuspense) => {
+    e.preventDefault();
+    signInWithSuspense(email, password);
   };
 
   return (
@@ -112,13 +133,18 @@ const Login = () => {
                   Forgot password?
                 </a>
               </div>
-              <button
-                onClick={submitHandler}
-                type="submit"
-                className="w-full text-white bg-carpetMoss/80 hover:bg-carpetMoss focus:ring-4 focus:outline-none focus:ring-carpetMoss/25 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-              >
-                Sign in
-              </button>
+              <SuspenseWrapper>
+                {(signInWithSuspense, isSigningIn) => (
+                  <button
+                    onClick={(e) => submitHandler(e, signInWithSuspense)}
+                    type="submit"
+                    className="w-full text-white bg-carpetMoss/80 hover:bg-carpetMoss focus:ring-4 focus:outline-none focus:ring-carpetMoss/25 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    disabled={isSigningIn}
+                  >
+                    {isSigningIn ? "Signing in..." : "Sign in"}
+                  </button>
+                )}
+              </SuspenseWrapper>
             </form>
           </div>
         </div>

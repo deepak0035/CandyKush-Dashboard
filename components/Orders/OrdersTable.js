@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import Image from "next/image";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -7,8 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { getOrders, updateOrders } from "@/lib/helper";
 import CurrencyFormat from "react-currency-format";
 import OrdersRow from "./OrdersRow";
-
-
+import LoaderSpinner from "@/components/LoaderSpinner"; // Import your loader spinner component
 
 const OrdersTable = () => {
   const { isLoading, isError, data, error, refetch } = useQuery(
@@ -67,14 +66,13 @@ const OrdersTable = () => {
     }
   };
 
-  if (isLoading) return <div>Orders Data Loading...</div>;
+  if (isLoading) return <LoaderSpinner />; // Display loader spinner while loading
+
   if (isError) return <div>Got Error {error?.message}</div>;
 
   return (
     <div className="h-full">
-  
-
-      {data.filter((order) => order.status === "Pending") < 1 ? (
+      {data && data.filter((order) => order.status === "Pending") < 1 ? (
         <div className="w-full bg-white flex justify-center items-center h-full text-5xl text-carpetMoss font-semibold">
           All clear on pending orders!
         </div>

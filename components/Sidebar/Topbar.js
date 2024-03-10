@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { isSidebarOpen, setToggleSidebar } from "@/Redux/Slices/dashboardSlice";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 const Topbar = () => {
   const dispatch = useDispatch();
@@ -73,28 +74,19 @@ const Topbar = () => {
               <div className="absolute z-50 top-14 right-2 mt-2 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow">
                 <ul className="py-1 text-gray-500" aria-labelledby="dropdown">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href="/user"
+                      onClick={toggleDropdown}
                       className="block py-2 px-4 text-sm hover:bg-gray-100"
                     >
                       Account settings
-                    </a>
+                    </Link>
                   </li>
                 </ul>
 
                 <ul className="py-1 text-gray-500" aria-labelledby="dropdown">
                   <li>
                     <a
-                      href="#"
-                      onClick={() => signIn()}
-                      className="block py-2 px-4 text-sm hover:bg-gray-100"
-                    >
-                      Sign In
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
                       onClick={() => signOut()}
                       className="block py-2 px-4 text-sm hover:bg-gray-100"
                     >
