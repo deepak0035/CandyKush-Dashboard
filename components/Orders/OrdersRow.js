@@ -9,6 +9,7 @@ const OrdersRow = ({
   customerNumber,
   orderItems,
   totalPrice,
+  orderTime,
   orderId,
   refetchOrders,
 }) => {
@@ -45,6 +46,20 @@ const OrdersRow = ({
       console.error("Error accepting order:", error);
     }
   };
+
+  // Format the order time
+  const formattedOrderTime =
+    new Date(orderTime).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    }) +
+    " , " +
+    new Date(orderTime).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
 
   return (
     <tr
@@ -125,6 +140,11 @@ const OrdersRow = ({
           prefix={"฿"}
           className="text-pottBlack px-1"
         />
+      </td>
+      <td className="px-4 py-4 text-lg font-medium">
+        <div className="flex justify-center items-center">
+          <p className="text-gray-700">{formattedOrderTime}</p>
+        </div>
       </td>
       <td className="px-4 py-4">
         <div className="flex justify-center items-center">

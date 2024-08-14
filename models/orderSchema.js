@@ -47,6 +47,10 @@ const orderSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  orderUpdateTime: {
+    type: Date,
+    default: Date.now,
+  },
   status: {
     type: String,
     enum: ["Pending", "Delivered", "Rejected"],

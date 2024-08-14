@@ -93,6 +93,9 @@ const OrdersTable = () => {
                 Total Price
               </th>
               <th scope="col" className="px-4 py-3 text-center">
+                Order Time
+              </th>
+              <th scope="col" className="px-4 py-3 text-center">
                 Actions
               </th>
             </tr>
@@ -104,13 +107,14 @@ const OrdersTable = () => {
             {data &&
               data
                 .filter((order) => order.status === "Pending")
-                .map(({ customerNumber, orderItems, totalPrice, _id }) => (
+                .map(({ customerNumber, orderItems, totalPrice, _id, orderTime }) => (
                   <OrdersRow
                     key={_id}
                     customerNumber={customerNumber}
                     orderItems={orderItems}
                     totalPrice={totalPrice}
                     orderId={_id}
+                    orderTime={orderTime}
                     refetchOrders={refetchOrders} // Pass refetchOrders as prop to OrdersRow
                   />
                 ))}

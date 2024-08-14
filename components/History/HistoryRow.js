@@ -11,6 +11,7 @@ const HistoryRow = ({
   totalPrice,
   orderId,
   orderTime,
+  orderUpdateTime,
   status,
   payment,
   refetchOrders,
@@ -33,20 +34,23 @@ const HistoryRow = ({
     }
   };
 
-  // Format the order time
-  const formattedOrderTime =
-    new Date(orderTime).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }) +
-    " , " +
-    new Date(orderTime).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+  function formatOrderTime(orderTime) {
+    const date = new Date(orderTime);
+    const formattedOrderTime =
+      date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }) +
+      " , " +
+      date.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
 
+    return formattedOrderTime;
+  }
   return (
     <tr
       key={orderId}
@@ -129,7 +133,14 @@ const HistoryRow = ({
       </td>
       <td className="px-4 py-4 text-lg font-medium">
         <div className="flex justify-center items-center">
-          <p className="text-gray-700">{formattedOrderTime}</p>
+          <p className="text-gray-700">
+            Order Created: {formatOrderTime(orderTime)}
+          </p>
+        </div>
+        <div className="flex justify-center items-center">
+          <p className="text-gray-700">
+            Order Updated: {formatOrderTime(orderUpdateTime)}
+          </p>
         </div>
       </td>
 

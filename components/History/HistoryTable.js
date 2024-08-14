@@ -74,6 +74,7 @@ const HistoryTable = () => {
                   totalPrice,
                   _id,
                   orderTime,
+                  orderUpdateTime,
                   status,
                   payment,
                 }) => (
@@ -84,6 +85,7 @@ const HistoryTable = () => {
                     totalPrice={totalPrice}
                     orderId={_id}
                     orderTime={orderTime}
+                    orderUpdateTime={orderUpdateTime}
                     status={status}
                     payment={payment}
                     refetchOrders={refetchOrders}
